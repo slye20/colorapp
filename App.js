@@ -1,30 +1,63 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import BlockRGB from "./component/BlockRGB";
 import { useState } from "react";
 
-function HomeScreen() {
-  const [colorArray, setColorArray] = useState([
-    { red: 255, green: 0, blue: 0, id: "0" },
-    { red: 0, green: 255, blue: 0, id: "1" },
-    { red: 0, green: 0, blue: 255, id: "2" },
-  ]);
+function HomeScreen({ navigation }) {
+  const [colorArray, setColorArray] = useState([]);
 
   function renderItem({ item }) {
-    return <BlockRGB red={item.red} green={item.green} blue={item.blue} />;
+    let { red, green, blue } = item;
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate("Colour", { ...item })}
+      >
+        <BlockRGB red={red} green={green} blue={blue} />
+      </TouchableOpacity>
+    );
   }
 
-  /* <BlockRGB
-    red={Math.ceil(Math.random() * 255)}
-    green={Math.ceil(Math.random() * 255)}
-    blue={Math.ceil(Math.random() * 255)}
-  /> */
+  function addColor() {
+    let colorObj = {
+      red: Math.ceil(Math.random() * 255),
+      green: Math.ceil(Math.random() * 255),
+      blue: Math.ceil(Math.random() * 255),
+      id: colorArray.length.toString(),
+    };
+    setColorArray([colorObj, ...colorArray]);
+  }
 
   return (
     <View style={styles.container}>
+      <Button onPress={addColor} title="Add colour" />
       <FlatList style={styles.list} data={colorArray} renderItem={renderItem} />
+    </View>
+  );
+}
+
+function ColourScreen({ route }) {
+  const { red, green, blue } = route.params;
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: `rgb(${red}, ${green}, ${blue})`,
+      }}
+    >
+      <Text>Red: {red}</Text>
+      <Text>Green: {green}</Text>
+      <Text>Blue: {blue}</Text>
     </View>
   );
 }
@@ -36,6 +69,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
         <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Colour" component={ColourScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
