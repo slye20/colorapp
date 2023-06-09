@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import {
   StyleSheet,
-  Text,
+  Dimensions,
   View,
   FlatList,
   Button,
@@ -27,6 +27,7 @@ function HomeScreen({ navigation }) {
     return (
       <TouchableOpacity
         onPress={() => navigation.navigate("Colour", { ...item })}
+        style={{ flex: 1 / numColumns }}
       >
         <BlockRGB red={red} green={green} blue={blue} />
       </TouchableOpacity>
@@ -43,11 +44,18 @@ function HomeScreen({ navigation }) {
     setColorArray([colorObj, ...colorArray]);
   }
 
+  const numColumns = 4;
+
   return (
     <View style={styles.container}>
       {/* <Button onPress={addColor} title="Add colour" /> */}
       <Button onPress={() => setColorArray([])} title="Reset colours" />
-      <FlatList style={styles.list} data={colorArray} renderItem={renderItem} />
+      <FlatList
+        style={styles.list}
+        data={colorArray}
+        renderItem={renderItem}
+        numColumns={numColumns}
+      />
     </View>
   );
 }
